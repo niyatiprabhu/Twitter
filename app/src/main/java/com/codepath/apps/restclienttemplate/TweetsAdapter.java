@@ -146,6 +146,15 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvNumFavorites.setText(String.valueOf(tweet.numFavorites));
             //tvNumRetweets.setText(String.valueOf(tweet.numFavorites));
 
+            if (tweet.isFavorited) {
+                Drawable newImage = context.getDrawable(android.R.drawable.star_big_on);
+                ibFavorite.setImageDrawable(newImage);
+            } else {
+                Drawable newImage = context.getDrawable(android.R.drawable.star_big_off);
+                ibFavorite.setImageDrawable(newImage);
+            }
+
+
             ibFavorite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
