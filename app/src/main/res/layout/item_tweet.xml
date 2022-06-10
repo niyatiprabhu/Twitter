@@ -19,7 +19,7 @@
 
     <TextView
         android:id="@+id/tvName"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginStart="3dp"
@@ -66,6 +66,7 @@
         android:layout_width="61dp"
         android:layout_height="20dp"
         android:layout_marginStart="10dp"
+        android:layout_marginBottom="-3dp"
         android:text="TextView"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/tvScreenName"
@@ -79,16 +80,36 @@
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivMedia" />
+        app:layout_constraintTop_toBottomOf="@+id/ibFavorite" />
 
     <TextView
         android:id="@+id/tvScreenName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="5dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="@+id/tvName"
         app:layout_constraintStart_toEndOf="@+id/tvName" />
+
+    <TextView
+        android:id="@+id/tvNumFavorites"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:text="123"
+        app:layout_constraintBottom_toBottomOf="@+id/ibFavorite"
+        app:layout_constraintStart_toEndOf="@+id/ibFavorite"
+        app:layout_constraintTop_toBottomOf="@+id/ivMedia" />
+
+    <ImageButton
+        android:id="@+id/ibFavorite"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toEndOf="@+id/ivProfilePicture"
+        app:layout_constraintTop_toBottomOf="@+id/ivMedia"
+        app:srcCompat="@android:drawable/btn_star_big_off" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

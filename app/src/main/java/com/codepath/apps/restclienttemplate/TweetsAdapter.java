@@ -2,10 +2,13 @@ package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.parceler.Parcels;
 
@@ -22,6 +26,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.Headers;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
@@ -117,6 +123,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvScreenName;
         ImageView ivMedia;
         TextView tvTimestamp;
+        ImageButton ibFavorite;
+        TextView tvNumFavorites;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -126,6 +134,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
             ivMedia = itemView.findViewById(R.id.ivMedia);
             tvTimestamp = itemView.findViewById(R.id.tvTimestamp);
+            ibFavorite = itemView.findViewById(R.id.ibFavorite);
+            tvNumFavorites = itemView.findViewById(R.id.tvNumFavorites);
             itemView.setOnClickListener(this);
         }
 
@@ -133,8 +143,63 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvBody.setText(tweet.body);
             tvName.setText(tweet.user.name);
             tvScreenName.setText("@" + tweet.user.screenName);
+            tvNumFavorites.setText(String.valueOf(tweet.numFavorites));
+            //tvNumRetweets.setText(String.valueOf(tweet.numFavorites));
+
+            ibFavorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    // IF NOT ALREADY FAVORITED
+                    if (!tweet.isFavorited) {
+                        // Tell Twitter API that I want to favorite
+                        TwitterApp.getTwitterClient(context).favoriteTweet(tweet.id, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                Log.i("adapter", "onSucess, tweet favorited, go check");
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                Log.e("adapter", "onFailure, tweet not favorited");
+                            }
+                        });
+                        // change the drawable to a on button
+                        tvNumFavorites.setText(String.valueOf(tweet.numFavorites));
+                        Drawable newImage = context.getDrawable(android.R.drawable.star_big_on);
+                        ibFavorite.setImageDrawable(newImage);
+                        // increment the text inside of tvNumFavorites
+                        tweet.isFavorited = true;
+                        tweet.numFavorites++;
+
+                    } else {
+                        // tell twitter I want to unfavorite
+                        TwitterApp.getTwitterClient(context).unfavoriteTweet(tweet.id, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                Log.i("adapter", "onSucess, tweet unfavorited, go check");
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                Log.e("adapter", "onFailure, tweet not unfavorited");
+                            }
+                        });
+                        // change the drawable to off button
+                        tvNumFavorites.setText(String.valueOf(tweet.numFavorites));
+                        Drawable newImage = context.getDrawable(android.R.drawable.star_big_off);
+                        ibFavorite.setImageDrawable(newImage);
+                        // decrement the text inside of tvNumFavorites
+                        tweet.isFavorited = false;
+                        tweet.numFavorites--;
+                    }
+
+
+
+                }
+            });
             try {
-                tvTimestamp.setText(getRelativeTimeAgo(tweet.createdAt));
+                tvTimestamp.setText("· " + getRelativeTimeAgo(tweet.createdAt));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -142,10 +207,16 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     .load(tweet.user.profileImageUrl)
                     .transform(new RoundedCorners(400))
                     .into(ivProfilePicture);
+
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            int mediaWidth = displayMetrics.widthPixels - 100;
+            int mediaHeight = (int) tweet.picSizeRatio + mediaWidth;
+
             if (!tweet.mediaUrl.equals("none")) {
                 Glide.with(context)
                         .load(tweet.mediaUrl)
-                        .transform(new RoundedCorners(20))
+                        .transform(new RoundedCorners(30))
+                        .override(mediaWidth, mediaHeight)
                         .into(ivMedia);
             } else {
                 ivMedia.setVisibility(View.GONE);
