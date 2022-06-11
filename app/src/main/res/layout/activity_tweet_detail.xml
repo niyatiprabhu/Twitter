@@ -7,13 +7,15 @@
     tools:context=".TweetDetailActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="912dp"
+        android:layout_height="299dp"
+        android:layout_marginTop="96dp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_goneMarginBottom="10dp"
-        tools:layout_editor_absoluteY="-1dp">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginBottom="10dp">
 
         <TextView
             android:id="@+id/tvScreenNameDetails"
@@ -41,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginStart="3dp"
-            android:layout_toEndOf="@+id/ivProfilePicture"
+            android:layout_toEndOf="@+id/ivProfilePictureDetails"
             android:text="TextView"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -58,8 +60,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="3dp"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="10dp"
-            android:layout_toEndOf="@+id/ivProfilePicture"
+            android:layout_toEndOf="@+id/ivProfilePictureDetails"
             android:autoLink="all"
             android:linksClickable="true"
             android:text="TextView"
@@ -72,35 +73,52 @@
 
         <ImageView
             android:id="@+id/ivMediaDetails"
-            android:layout_width="343dp"
+            android:layout_width="wrap_content"
 
-            android:layout_height="177dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivProfilePictureDetails"
             app:layout_constraintTop_toBottomOf="@+id/tvBodyDetails"
             tools:srcCompat="@tools:sample/avatars" />
-
-        <View
-            android:id="@+id/dividerDetails"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="24dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.454"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivMediaDetails" />
 
         <TextView
             android:id="@+id/tvTimestampDetails"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:text="TextView"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@+id/tvBodyDetails"
             app:layout_constraintTop_toBottomOf="@+id/ivMediaDetails" />
+
+        <ImageButton
+            android:id="@+id/ibFavoriteDetails"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/emptyheart"
+            app:layout_constraintStart_toEndOf="@+id/ivProfilePictureDetails"
+            app:layout_constraintTop_toBottomOf="@+id/tvTimestampDetails" />
+
+        <ImageButton
+            android:id="@+id/ibReplyDetail"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="50dp"
+            android:background="@drawable/reply"
+            app:layout_constraintBottom_toBottomOf="@+id/ibFavoriteDetails"
+            app:layout_constraintStart_toEndOf="@+id/ibFavoriteDetails" />
+
+        <ImageButton
+            android:id="@+id/ibRetweetDetail"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="50dp"
+            android:background="@drawable/retweet"
+            app:layout_constraintBottom_toBottomOf="@+id/ibReplyDetail"
+            app:layout_constraintStart_toEndOf="@+id/ibReplyDetail" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

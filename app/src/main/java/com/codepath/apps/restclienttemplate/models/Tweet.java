@@ -20,7 +20,6 @@ public class Tweet {
     public String id;
     public boolean isFavorited;
     public boolean isRetweeted;
-    public boolean isReplyTweet;
     public int numFavorites;
     public int numRetweets;
 

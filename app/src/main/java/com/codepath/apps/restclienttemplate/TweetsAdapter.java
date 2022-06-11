@@ -1,5 +1,6 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -20,6 +21,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
+import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import java.text.ParseException;
@@ -125,6 +127,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvTimestamp;
         ImageButton ibFavorite;
         TextView tvNumFavorites;
+        ImageButton ibReply;
+        ImageButton ibRetweet;
+        TextView tvNumRetweets;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -136,6 +141,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvTimestamp = itemView.findViewById(R.id.tvTimestamp);
             ibFavorite = itemView.findViewById(R.id.ibFavorite);
             tvNumFavorites = itemView.findViewById(R.id.tvNumFavorites);
+            ibReply = itemView.findViewById(R.id.ibReply);
+            ibRetweet = itemView.findViewById(R.id.ibRetweet);
+            tvNumRetweets = itemView.findViewById(R.id.tvNumRetweets);
             itemView.setOnClickListener(this);
         }
 
@@ -144,14 +152,20 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvName.setText(tweet.user.name);
             tvScreenName.setText("@" + tweet.user.screenName);
             tvNumFavorites.setText(String.valueOf(tweet.numFavorites));
-            //tvNumRetweets.setText(String.valueOf(tweet.numFavorites));
+            tvNumRetweets.setText(String.valueOf(tweet.numFavorites));
+
+            Drawable newImage = context.getDrawable(R.drawable.retweet);
+            ibReply.setBackground(newImage);
+
+            newImage = context.getDrawable(R.drawable.reply);
+            ibReply.setBackground(newImage);
 
             if (tweet.isFavorited) {
-                Drawable newImage = context.getDrawable(android.R.drawable.star_big_on);
-                ibFavorite.setImageDrawable(newImage);
+                newImage = context.getDrawable(R.drawable.fullheart);
+                ibFavorite.setBackground(newImage);
             } else {
-                Drawable newImage = context.getDrawable(android.R.drawable.star_big_off);
-                ibFavorite.setImageDrawable(newImage);
+                newImage = context.getDrawable(R.drawable.emptyheart);
+                ibFavorite.setBackground(newImage);
             }
 
 
@@ -174,12 +188,13 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                             }
                         });
                         // change the drawable to a on button
-                        tvNumFavorites.setText(String.valueOf(tweet.numFavorites));
-                        Drawable newImage = context.getDrawable(android.R.drawable.star_big_on);
-                        ibFavorite.setImageDrawable(newImage);
+                        Drawable newImage = context.getDrawable(R.drawable.fullheart);
+                        ibFavorite.setBackground(newImage);
                         // increment the text inside of tvNumFavorites
                         tweet.isFavorited = true;
                         tweet.numFavorites++;
+                        tvNumFavorites.setText(String.valueOf(tweet.numFavorites));
+
 
                     } else {
                         // tell twitter I want to unfavorite
@@ -195,18 +210,32 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                             }
                         });
                         // change the drawable to off button
-                        tvNumFavorites.setText(String.valueOf(tweet.numFavorites));
-                        Drawable newImage = context.getDrawable(android.R.drawable.star_big_off);
-                        ibFavorite.setImageDrawable(newImage);
+                        Drawable newImage = context.getDrawable(R.drawable.emptyheart);
+                        ibFavorite.setBackground(newImage);
                         // decrement the text inside of tvNumFavorites
                         tweet.isFavorited = false;
                         tweet.numFavorites--;
+                        tvNumFavorites.setText(String.valueOf(tweet.numFavorites));
                     }
 
 
 
                 }
             });
+
+            ibReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // pop up a compose screen
+                    // like a regular tweet but have an extra attribute called "in_reply_to_status_id"
+                    Intent i = new Intent(context, ComposeActivity.class);
+                    i.putExtra("tweet_replying_to", Parcels.wrap(tweet));
+                    //context.startActivity(i);
+                    ((Activity)context).startActivityForResult(i, TimelineActivity.REQUEST_CODE);
+                }
+            });
+
+
             try {
                 tvTimestamp.setText("· " + getRelativeTimeAgo(tweet.createdAt));
             } catch (ParseException e) {
@@ -218,8 +247,12 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     .into(ivProfilePicture);
 
             DisplayMetrics displayMetrics = new DisplayMetrics();
-            int mediaWidth = displayMetrics.widthPixels - 100;
-            int mediaHeight = (int) tweet.picSizeRatio + mediaWidth;
+            ((Activity) context).getWindowManager()
+                    .getDefaultDisplay()
+                    .getMetrics(displayMetrics);
+
+            int mediaWidth = displayMetrics.widthPixels - 200;
+            int mediaHeight = (int)(tweet.picSizeRatio * mediaWidth);
 
             if (!tweet.mediaUrl.equals("none")) {
                 Glide.with(context)
