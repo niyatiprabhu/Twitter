@@ -39,7 +39,7 @@ The following **optional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-![App Demo Link](screenshots/Twitter.gif)
+![App Demo Link](screenshots/TwitterDemo.gif)
 
 GIF created with [Kap](https://getkap.co/).
 
